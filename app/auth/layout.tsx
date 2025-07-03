@@ -6,29 +6,42 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="w-full h-full flex flex-col md:flex-row justify-center items-center bg-[#2574b7]">
-      {/* این بخش همیشه دیده می‌شود و در موبایل تمام عرض را می‌گیرد */}
-      <div className="w-full md:w-1/2 h-full">
+    <div className="w-full h-screen flex flex-col md:flex-row justify-center items-center ">
+      {/* سمت چپ: فرم ورود/ثبت‌نام یا هر چی باشه */}
+      <div className="w-full md:w-1/2 h-full flex justify-center items-center bg-[#f5f7fa]">
         {children}
       </div>
-      {/* این بخش فقط در مدیوم و بالاتر دیده می‌شود */}
-      <div className="hidden md:flex w-1/2 h-screen justify-center items-center">
-        <div
-          className="w-[95%] h-[95%] bg-cover bg-center rounded-lg shadow-2xl"
-          style={{ backgroundImage: 'url("/assets/images/background.png")' }}
+
+      {/* سمت راست: ویدیو بک‌گراند فقط در md+ */}
+      <div className="hidden md:flex w-1/2 h-full relative overflow-hidden">
+        {/* ویدیو بک‌گراند */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute top-0 left-0 w-full h-full object-cover"
         >
-          <div className="w-36 h-20 bg-white flex justify-center items-center rounded-md m-5">
-            {/* <Image
-              src={"/static/images/logo.png"}
+          <source src="/assets/videos/video-1.mp4" type="video/mp4" />
+          مرورگر شما از پخش ویدیو پشتیبانی نمی‌کند.
+        </video>
+
+        {/* لایه‌ی محتوا روی ویدیو (مثلاً لوگو) */}
+        <div className="relative z-10 w-full h-full flex justify-start items-start p-4">
+          <div className="w-36 h-20  flex justify-center items-center">
+            {/* اگر خواستی لوگو رو اضافه کن */}
+            <Image
+              src={"/assets/images/logo.png"}
               alt="logo"
-              className="max-w-[150px] max-h-[50px] sm:max-w-[250px] sm:max-h-[90px] md:max-w-[300px] md:max-h-[100px]"
-              width={150}
-              height={70}
-            /> */}
+              width={125}
+              height={50}
+            />
           </div>
         </div>
-      </div>
 
+        {/* لایه‌ی شفاف برای بهتر دیده شدن محتوا */}
+        <div className="absolute top-0 left-0 w-full h-full bg-black/20 z-0" />
+      </div>
     </div>
   );
 }

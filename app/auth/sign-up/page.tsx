@@ -22,8 +22,8 @@ const Page = () => {
 
   return (
     <section className="w-full h-screen flex flex-col justify-center items-center bg-secondary">
-        <h1 className="relative hidden sm:block top-10 text-5xl font-extrabold text-white drop-shadow-md tracking-wide">
-        Omid Faza
+        <h1 className="relative hidden sm:block top-10 text-5xl font-extrabold text-black drop-shadow-md tracking-wide">
+        SpaceOmid 
         </h1>
       <div className="w-5/6 lg:w-3/5 h-full flex justify-center items-center">
         <SignUpForm onSubmit={handleSubmit}/>
