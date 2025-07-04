@@ -1,19 +1,37 @@
-// hooks/useDeleteUser.ts
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axiosInstance from '@/api/axiosInstance';
-import { AxiosError } from 'axios';
+import { toast } from 'sonner';
 
-const deleteUser = async (id: number): Promise<void> => {
-  await axiosInstance.delete(`/users/${id}`);
+const deleteUser = async (id: number): Promise<{ message: string }> => {
+  const response = await fetch(`/api/users?id=${id}`, {
+    method: 'DELETE',
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to delete user');
+  }
+
+  return response.json();
 };
 
 export const useDeleteUser = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<void, AxiosError, number>({
+  return useMutation({
     mutationFn: deleteUser,
-    onSuccess: () => {
+
+    onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
+      toast.success(`کاربر با شناسه ${id} با موفقیت حذف شد`);
+    },
+
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        'خطا در حذف کاربر. لطفاً دوباره تلاش کنید.';
+
+      toast.error(message);
+      console.error('خطا در حذف کاربر:', error);
     },
   });
 };
