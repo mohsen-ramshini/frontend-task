@@ -95,7 +95,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
       />
 
       <Link
-        href="/forget-password"
+        href=""
         className="block text-sm text-blue-600 hover:underline"
       >
         Forgot your password?

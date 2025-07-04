@@ -4,20 +4,20 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 // import { toast } from "sonner";
-// import { useLogin } from "@/features/auth/api/use-sign-in";
 import { LoginForm } from "@/features/auth/components/LoginForm";
 
 const Page = () => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-//   const loginMutation = useLogin();
+
 
 const handleSubmit = (values: { username: string; password: string }) => {
   setLoading(true);
   setErrorMsg(null);
 
     console.log(values);
+    router.push("/dashboard")
     
 };
 
