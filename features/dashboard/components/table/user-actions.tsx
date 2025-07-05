@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Eye, Edit, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { EditUserModal } from '@/features/dashboard/components/modal/EditUserModal'; 
-import { DeleteUserButton } from '../modal/DeleteUserModal';
+import { DeleteUserModal } from '../modal/DeleteUserModal';
 import { useDeleteUser } from '../../api/use-delete-user';
 
 interface User {
@@ -69,7 +69,7 @@ export const UserActions: React.FC<UserActionsProps> = ({ user }) => {
           <Edit className="w-4 h-4" />
         </Button>
 
-        <DeleteUserButton
+        <DeleteUserModal
           userId={user.id}
           deleteUser={deleteUserMutation.mutateAsync}
           onDeleteSuccess={() => {
