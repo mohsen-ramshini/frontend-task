@@ -17,7 +17,6 @@ interface DeleteUserButtonProps {
   deleteUser: (id: number) => Promise<any>; 
 }
 
-
 export const DeleteUserModal: React.FC<DeleteUserButtonProps> = ({
   userId,
   onDeleteSuccess,
@@ -34,7 +33,6 @@ export const DeleteUserModal: React.FC<DeleteUserButtonProps> = ({
       onDeleteSuccess?.();
     } catch (error) {
       console.error(error);
-      // میتونی پیام خطا نشون بدی
     } finally {
       setIsDeleting(false);
     }

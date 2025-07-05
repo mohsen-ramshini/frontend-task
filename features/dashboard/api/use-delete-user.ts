@@ -1,18 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import axiosInstance from '@/api/axiosInstance';
 
 const deleteUser = async (id: number): Promise<void> => {
-  const response = await fetch(`https://reqres.in/api/users/${id}`, {
-    method: 'DELETE',
-    headers: { "x-api-key": "reqres-free-v1" },
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to delete user');
-  }
-
-  // No response body to parse, just return
-  return;
+  await axiosInstance.delete(`/users/${id}`);
 };
 
 export const useDeleteUser = () => {

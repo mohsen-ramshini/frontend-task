@@ -29,7 +29,7 @@ import {
   ChevronsRight,
 } from "lucide-react";
 
-import { useUsers } from "../../api/use-get-users"; // مسیر خودت رو اصلاح کن
+import { useUsers } from "../../api/use-get-users"; 
 
 export interface User {
   id: number;
@@ -44,15 +44,11 @@ interface DataTableProps<TValue> {
 }
 
 export function DataTable<TValue>({ columns }: DataTableProps<TValue>) {
-  // pageIndex صفر-مبنایی
   const [pageIndex, setPageIndex] = useState(0);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
-
-  // واکشی داده صفحه فعلی (pageIndex + 1 چون API از 1 شروع می‌کنه)
   const { data, isLoading, isError } = useUsers(pageIndex + 1);
-
   const usersData = data?.data ?? [];
 
   const safeToLower = (value: unknown): string =>
@@ -65,7 +61,7 @@ export function DataTable<TValue>({ columns }: DataTableProps<TValue>) {
       sorting,
       columnFilters,
       globalFilter,
-      pagination: { pageIndex, pageSize: 6 }, // pageSize فقط برای UI (برای نشان دادن تعداد)
+      pagination: { pageIndex, pageSize: 6 },
     },
     manualPagination: true,
     pageCount: data?.total_pages ?? 1,
@@ -101,7 +97,6 @@ export function DataTable<TValue>({ columns }: DataTableProps<TValue>) {
   return (
     <TooltipProvider>
       <div className="space-y-4">
-        {/* جستجوی کلی */}
         <div className="flex items-center justify-between">
           <Input
             placeholder="Search by first name, last name, or email..."
@@ -110,8 +105,6 @@ export function DataTable<TValue>({ columns }: DataTableProps<TValue>) {
             className="max-w-md"
           />
         </div>
-
-        {/* جدول */}
         <div className="rounded-xl border border-muted shadow-sm overflow-x-auto">
           <Table>
             <TableHeader className="bg-muted/50">
@@ -182,8 +175,6 @@ export function DataTable<TValue>({ columns }: DataTableProps<TValue>) {
             </TableBody>
           </Table>
         </div>
-
-        {/* صفحه‌بندی */}
         <div className="flex flex-col sm:flex-row items-center justify-between pt-2 gap-2">
           <div className="text-xs text-muted-foreground">
             Page {pageIndex + 1} of {data?.total_pages ?? 1}

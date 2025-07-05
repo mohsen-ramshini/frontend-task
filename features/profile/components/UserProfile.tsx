@@ -3,21 +3,15 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useGetUserById } from '@/features/profile/api/useGetUserById';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
+import { UserProfileProps } from "../types/profile"
 import Image from 'next/image';
 
-interface UserProfileProps {
-  id: number;
-}
 
 export const UserProfile: React.FC<UserProfileProps> = ({ id }) => {
   const { data: user, isLoading, isError } = useGetUserById(id);
   const router = useRouter();
-
-
-  
 
   return (
     <div className="max-w-xl mx-auto mt-10 space-y-6 px-4">

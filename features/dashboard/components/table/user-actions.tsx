@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Eye, Edit, Trash2 } from 'lucide-react';
+import { Eye, Edit } from 'lucide-react';
 import { useState } from 'react';
 import { EditUserModal } from '@/features/dashboard/components/modal/EditUserModal'; 
 import { DeleteUserModal } from '../modal/DeleteUserModal';
@@ -27,7 +27,7 @@ export const UserActions: React.FC<UserActionsProps> = ({ user }) => {
 
   const deleteUserMutation = useDeleteUser();
   const updateUser = useUpdateUser({
-    reset: () => {}, // اگر لازم دارید اینجا تعریف کنید
+    reset: () => {}, 
     setOpen: setIsEditOpen,
     setError: () => {},
   });
@@ -38,13 +38,12 @@ export const UserActions: React.FC<UserActionsProps> = ({ user }) => {
     setIsUpdating(true);
 
     updateUser.mutate(
-      { id: user.id, ...values }, // اضافه کردن id به داده‌ها
+      { id: user.id, ...values },
       {
         onSuccess: () => {
           setIsUpdating(false);
           setIsEditOpen(false);
-          // مثلا رفرش داده‌ها یا هر کار دیگه
-          router.refresh(); // اگر از next/navigation@app استفاده می‌کنید
+          router.refresh();
         },
         onError: () => {
           setIsUpdating(false);

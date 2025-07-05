@@ -2,40 +2,19 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import Cookies from 'js-cookie';
+import axiosInstance from '@/api/axiosInstance';
+import { LoginInput, LoginResponse} from "../types/auth"
 
-interface LoginInput {
-  email: string;
-  password: string;
-}
 
-interface LoginResponse {
-  token: string;
-}
 
 const login = async (credentials: LoginInput): Promise<LoginResponse> => {
   console.log('Sending login request with data:', credentials);
 
-  const response = await fetch('https://reqres.in/api/login', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      "x-api-key": "reqres-free-v1"
-    },
-    body: JSON.stringify(credentials),
-  });
+  const response = await axiosInstance.post('/login', credentials);
 
-  console.log('Response status:', response.status);
+  console.log('Received data from server:', response.data);
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('Server response error:', errorText);
-    throw new Error('Login failed');
-  }
-
-  const data = await response.json();
-  console.log('Received data from server:', data);
-
-  return data;
+  return response.data;
 };
 
 export const useLogin = ({
@@ -53,7 +32,6 @@ export const useLogin = ({
     mutationFn: login,
 
     onSuccess: (data) => {
-      // Save token in cookie, expire in 7 days (you can adjust)
       Cookies.set('token', data.token, { expires: 7 });
 
       queryClient.invalidateQueries({ queryKey: ['auth'] });

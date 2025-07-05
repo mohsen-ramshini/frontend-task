@@ -9,12 +9,8 @@ interface Params {
 }
 
 export default function UserPage({ params }: { params: Promise<Params> }) {
-  // await کردن params با use
   const { userId } = use(params);
-
-  // اعتبارسنجی userId
   if (isNaN(Number(userId))) {
-    // مثلا می‌تونی اینجا handle کنی یا notFound بریزی
     throw new Error("Invalid userId");
   }
 

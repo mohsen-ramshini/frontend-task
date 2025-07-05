@@ -1,41 +1,18 @@
 // hooks/useRegister.ts
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import axiosInstance from '@/api/axiosInstance';
+import { RegisterInput,RegisterResponse} from "../types/auth"
 
-interface RegisterInput {
-  email: string;
-  password: string;
-}
-
-interface RegisterResponse {
-  id: number;
-  token: string;
-}
 
 const register = async (credentials: RegisterInput): Promise<RegisterResponse> => {
   console.log('Sending registration request with data:', credentials);
 
-  const response = await fetch('https://reqres.in/api/register', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': 'reqres-free-v1',
-    },
-    body: JSON.stringify(credentials),
-  });
+  const response = await axiosInstance.post('/register', credentials);
 
-  console.log('Response status:', response.status);
+  console.log('Received data from server:', response.data);
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('Server error response:', errorText);
-    throw new Error('Registration failed');
-  }
-
-  const data = await response.json();
-  console.log('Received data from server:', data);
-
-  return data;
+  return response.data;
 };
 
 export const useRegister = ({
@@ -57,7 +34,6 @@ export const useRegister = ({
       toast.success('Registration successful');
       reset?.();
       setOpen?.(false);
-      // You can store the token here if needed
     },
 
     onError: (error: any) => {

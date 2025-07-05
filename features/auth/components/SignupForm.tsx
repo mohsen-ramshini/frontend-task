@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signUpSchema } from "../types/schema"; // فرض کردم schema رو به روز کردی برای فقط email و password
+import { signUpSchema } from "../types/schema";
 import { SignUpFormProps, SignUpFormValues } from "../types/auth";
 
 import {

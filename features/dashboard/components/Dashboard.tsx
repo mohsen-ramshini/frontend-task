@@ -1,15 +1,12 @@
 "use client"
 import React from 'react';
-import Cookies from 'js-cookie';       // اضافه کن
-import { useRouter } from 'next/navigation';  // اضافه کن
+import Cookies from 'js-cookie';    
+import { useRouter } from 'next/navigation';  
 
 import { DataTable } from './table/data-table';
 import { userColumns } from './table/user-columns';
 import { useUsers } from '../api/use-get-users';
-import { useUpdateUser } from '../api/use-update-user';
-import { useDeleteUser } from '../api/use-delete-user';
 import { CreateUserModal } from '@/features/dashboard/components/modal/createUserModal';
-import { EditUserModal } from './modal/EditUserModal';
 import { toast } from 'sonner';
 
 const Dashboard = () => {

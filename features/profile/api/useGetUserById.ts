@@ -1,20 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
+import axiosInstance from '@/api/axiosInstance';
 import { User } from '@/features/dashboard/types/user';
 
 const fetchUserById = async (id: number): Promise<User> => {
-  const response = await fetch(`https://reqres.in/api/users/${id}`, { headers: { "x-api-key": "reqres-free-v1" },});
+  const response = await axiosInstance.get(`/users/${id}`);
 
-  if (!response.ok) {
-    throw new Error('Failed to fetch user');
-  }
+  console.log('API response:', response.data);
 
-  const json = await response.json();
-
-  console.log('API response:', json); // اضافه کردن لاگ برای دیدن داده
-
-  return json.data as User; // دسترسی به data داخل پاسخ
+  return response.data.data as User; 
 };
-
 
 export const useGetUserById = (id: number) => {
   return useQuery<User, Error>({

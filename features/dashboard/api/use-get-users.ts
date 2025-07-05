@@ -1,25 +1,10 @@
-// hooks/useUsers.ts
 import { useQuery } from '@tanstack/react-query';
-import { User } from '@/features/dashboard/types/user';
-
-interface UsersResponse {
-  page: number;
-  per_page: number;
-  total: number;
-  total_pages: number;
-  data: User[];
-}
+import axiosInstance from '@/api/axiosInstance';
+import { UsersResponse } from "../types/user"
 
 const fetchUsers = async (page: number): Promise<UsersResponse> => {
-  const response = await fetch(`https://reqres.in/api/users?page=${page}`, {
-    headers: { "x-api-key": "reqres-free-v1" },
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch users');
-  }
-
-  return response.json();
+  const response = await axiosInstance.get('/users', { params: { page } });
+  return response.data;
 };
 
 export const useUsers = (page: number) => {

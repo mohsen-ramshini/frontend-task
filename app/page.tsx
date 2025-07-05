@@ -10,7 +10,7 @@ const Page = () => {
     router.replace("/dashboard");
   }, [router]);
 
-  return null; // یا می‌تونی یک لودینگ ساده نمایش بدی
+  return null;
 };
 
 export default Page;

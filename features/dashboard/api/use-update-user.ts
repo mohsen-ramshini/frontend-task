@@ -1,25 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { User } from '@/features/dashboard/types/user';
 import { toast } from 'sonner';
+import axiosInstance from '@/api/axiosInstance';
+import { UpdateUserInput } from "../types/user"
 
-interface UpdateUserInput {
-  id: number;        // added id
-  name: string;
-  job: string;
-}
 
 const updateUser = async ({ id, ...updatedUser }: UpdateUserInput): Promise<User> => {
-  const response = await fetch(`https://reqres.in/api/users/${id}`, {   
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', "x-api-key": "reqres-free-v1" },
-    body: JSON.stringify(updatedUser),
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to update user');
-  }
-
-  return response.json();
+  const response = await axiosInstance.put(`/users/${id}`, updatedUser);
+  return response.data;
 };
 
 export const useUpdateUser = ({
