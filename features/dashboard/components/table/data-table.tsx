@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ColumnDef,
   flexRender,
@@ -19,6 +19,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '@/features/dashboard/store/index';
+import { setUsers } from '@/features/dashboard/store/userSlice';
+
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -49,8 +54,15 @@ export function DataTable<TValue>({ columns }: DataTableProps<TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
+  const dispatch = useDispatch();
+  const usersData = useSelector((state: RootState) => state.users.users);
   const { data, isLoading, isError } = useUsers(pageIndex + 1);
-  const usersData = data?.data ?? [];
+
+  useEffect(() => {
+  if (data?.data) {
+    dispatch(setUsers(data.data));
+  }
+}, [data, dispatch]);
 
   const safeToLower = (value: unknown): string =>
     typeof value === "string" ? value.toLowerCase() : "";

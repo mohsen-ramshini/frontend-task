@@ -10,7 +10,7 @@ import { CreateUserModal } from '@/features/dashboard/components/modal/createUse
 import { toast } from 'sonner';
 
 const Dashboard = () => {
-  const { data: userList, isLoading, error } = useUsers(1);
+  const { isLoading, error } = useUsers(1);
   const router = useRouter();
 
   if (error) return <p>Error: {error.message}</p>;
