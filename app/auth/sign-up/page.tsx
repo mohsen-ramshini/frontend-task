@@ -3,8 +3,10 @@
 import { SignUpForm } from "@/features/auth/components/SignupForm";
 import { SignUpFormValues } from "@/features/auth/types/auth";
 import { useRegister } from "@/features/auth/api/use-register";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
+import { toast } from "sonner";
 
 const Page = () => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -27,6 +29,13 @@ const Page = () => {
       },
     });
   };
+    useEffect(() => {
+    const token = Cookies.get("token");
+    if (token) {
+      router.replace("/dashboard");
+      toast.info("You are already logged in.")
+    }
+  }, [router]);
 
   return (
     <section className="w-full h-screen flex flex-col justify-center items-center bg-secondary relative">

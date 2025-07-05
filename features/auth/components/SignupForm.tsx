@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export const SignUpForm: React.FC<SignUpFormProps> = ({ onSubmit }) => {
   const form = useForm<SignUpFormValues>({
@@ -27,6 +28,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ onSubmit }) => {
   });
 
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter()
 
   return (
     <div className="w-full max-w-md mx-auto bg-white rounded-2xl shadow-xl p-6 md:p-10 mt-12 text-left">
@@ -97,6 +99,14 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ onSubmit }) => {
             Sign Up
           </Button>
         </form>
+          <Button
+            type="button"
+            variant="ghost"
+            className="w-full text-sm text-gray-600 dark:text-gray-400 hover:underline mt-5"
+            onClick={() => router.push("/auth/sign-in")}
+          >
+            Already have an account? Sign In
+          </Button>
       </Form>
     </div>
   );

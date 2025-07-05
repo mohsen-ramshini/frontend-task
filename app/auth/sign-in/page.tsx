@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { LoginForm } from "@/features/auth/components/LoginForm";
+import Cookies from "js-cookie";
 import { useLogin } from "@/features/auth/api/use-login";
+import { toast } from "sonner";
 
 const Page = () => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -27,6 +28,13 @@ const Page = () => {
       },
     });
   };
+    useEffect(() => {
+    const token = Cookies.get("token");
+    if (token) {
+      router.replace("/dashboard");
+      toast.info("You are already logged in.")
+    }
+  }, [router]);
 
   return (
     <section className="w-full min-h-screen flex flex-col items-center justify-center bg-secondary py-8 relative">
