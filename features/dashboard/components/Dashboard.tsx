@@ -6,6 +6,7 @@ import { useUsers } from '../api/use-get-users';
 import { useUpdateUser } from '../api/use-update-user';
 import { useDeleteUser } from '../api/use-delete-user';
 import { CreateUserModal } from '@/features/dashboard/components/modal/createUserModal';
+import { EditUserModal } from './modal/EditUserModal';
 
 const Dashboard = () => {
   const { data: userList, isLoading, error } = useUsers();
@@ -20,6 +21,7 @@ const Dashboard = () => {
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold">Users List</h1>
         <CreateUserModal />
+
       </div>
 
       <DataTable columns={userColumns} data={userList ?? []} />

@@ -4,11 +4,8 @@ import { User } from '@/features/dashboard/types/user';
 import { toast } from 'sonner';
 
 interface UpdateUserInput {
-  id: number;
-  email?: string;
-  first_name?: string;
-  last_name?: string;
-  avatar?: string;
+  name: string;
+  job: string;
 }
 
 const updateUser = async (updatedUser: UpdateUserInput): Promise<User> => {
@@ -41,7 +38,7 @@ export const useUpdateUser = ({
 
     onSuccess: (_, data) => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
-      toast.success(`کاربر با شناسه ${data.id} با موفقیت بروزرسانی شد`);
+      toast.success(`کاربر با شناسه با موفقیت بروزرسانی شد`);
       reset?.();
       setOpen?.(false);
     },
