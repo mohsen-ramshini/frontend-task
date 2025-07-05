@@ -1,19 +1,12 @@
 export type LoginFormValues = {
-  username: string;
+  email: string;      // به جای username
   password: string;
 };
 
 export type SignUpFormValues = {
-  username: string
-  password: string,
-  email: string,
-  phone_number: string,
-  first_name: string,
-  last_name: string,
-  role: "caregiver",
-  relationship_to_user: string,
-  assigned_patients?: number[]
-}
+  email: string;
+  password: string;
+};
 
 export type LoginFormProps = {
   onSubmit: (values: LoginFormValues) => void;
@@ -35,7 +28,7 @@ export interface SignupResponse {
 }
 
 export interface LogoutResponse {
-  detail: string; 
+  detail: string;
 }
 
 export const relationships = [
