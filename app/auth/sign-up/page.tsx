@@ -46,7 +46,7 @@ const Page = () => {
         </div>
       )}
 
-      <h1 className="relative hidden sm:block top-10 text-5xl font-extrabold text-black drop-shadow-md tracking-wide z-10">
+      <h1 className="relative  sm:block top-10 text-5xl font-extrabold text-black drop-shadow-md tracking-wide z-10">
         SpaceOmid
       </h1>
 

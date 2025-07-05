@@ -23,13 +23,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { Card } from "@/components/ui/card";
 
 import {
   ChevronsLeft,
   ChevronsRight,
 } from "lucide-react";
 
-import { useUsers } from "../../api/use-get-users"; 
+import { useUsers } from "../../api/use-get-users";
 
 export interface User {
   id: number;
@@ -94,6 +95,8 @@ export function DataTable<TValue>({ columns }: DataTableProps<TValue>) {
     },
   });
 
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
+
   return (
     <TooltipProvider>
       <div className="space-y-4">
@@ -105,7 +108,35 @@ export function DataTable<TValue>({ columns }: DataTableProps<TValue>) {
             className="max-w-md"
           />
         </div>
-        <div className="rounded-xl border border-muted shadow-sm overflow-x-auto">
+
+        {/* ✅ Mobile View */}
+        <div className="sm:hidden space-y-4">
+          {isLoading ? (
+            <p className="text-center py-6">Loading...</p>
+          ) : isError ? (
+            <p className="text-center py-6 text-red-500">Error loading data.</p>
+          ) : table.getRowModel().rows.length ? (
+            table.getRowModel().rows.map((row) => (
+              <Card key={row.id} className="p-4 space-y-2">
+                {row.getVisibleCells().map((cell) => (
+                  <div key={cell.id} className="text-sm">
+                    <span className="font-semibold block">
+                      {cell.column.columnDef.header as string}
+                    </span>
+                    <span className="text-muted-foreground">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </span>
+                  </div>
+                ))}
+              </Card>
+            ))
+          ) : (
+            <p className="text-center py-6 text-muted-foreground">No results found.</p>
+          )}
+        </div>
+
+        {/* ✅ Desktop View */}
+        <div className="rounded-xl border border-muted shadow-sm overflow-x-auto hidden sm:block">
           <Table>
             <TableHeader className="bg-muted/50">
               {table.getHeaderGroups().map((headerGroup) => (
@@ -175,6 +206,8 @@ export function DataTable<TValue>({ columns }: DataTableProps<TValue>) {
             </TableBody>
           </Table>
         </div>
+
+        {/* Pagination */}
         <div className="flex flex-col sm:flex-row items-center justify-between pt-2 gap-2">
           <div className="text-xs text-muted-foreground">
             Page {pageIndex + 1} of {data?.total_pages ?? 1}
