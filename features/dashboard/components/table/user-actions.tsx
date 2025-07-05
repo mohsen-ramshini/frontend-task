@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { EditUserModal } from '@/features/dashboard/components/modal/EditUserModal'; 
 import { DeleteUserModal } from '../modal/DeleteUserModal';
 import { useDeleteUser } from '../../api/use-delete-user';
+import { useRouter } from 'next/navigation';
 
 interface User {
   id: number;
@@ -24,6 +25,7 @@ export const UserActions: React.FC<UserActionsProps> = ({ user }) => {
   const [isUpdating, setIsUpdating] = useState(false);
 
   const deleteUserMutation = useDeleteUser();
+  const router = useRouter();
 
   // فرضاً این تابع باید درخواست API برای آپدیت کاربر را اجرا کند
   const handleUpdate = async (data: { name: string; job: string }) => {
@@ -50,7 +52,7 @@ export const UserActions: React.FC<UserActionsProps> = ({ user }) => {
           size="icon"
           onClick={(e) => {
             e.stopPropagation();
-            alert(`View user ${user.id}`);
+            router.push(`/dashboard/user/${user.id}`);
           }}
           aria-label="View user"
         >
