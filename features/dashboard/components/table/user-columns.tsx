@@ -1,26 +1,16 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "@/components/ui/button";
-import { Eye, Edit, Trash2 } from "lucide-react";
 import { UserActions } from "./user-actions";
+import type { User } from "../../types/user";
 
-export const userColumns: ColumnDef<any>[] = [
+export const userColumns: ColumnDef<User, unknown>[] = [
   {
-    id: "select",
-    header: ({ table }) => (
-      <input
-        type="checkbox"
-        checked={table.getIsAllPageRowsSelected()}
-        onChange={table.getToggleAllPageRowsSelectedHandler()}
-        aria-label="Select all rows"
-      />
-    ),
+    id: "avatar",
+    header: "Avatar",
     cell: ({ row }) => (
-      <input
-        type="checkbox"
-        checked={row.getIsSelected()}
-        onChange={row.getToggleSelectedHandler()}
-        aria-label={`Select row ${row.original.id}`}
-        onClick={(e) => e.stopPropagation()}
+      <img
+        src={row.original.avatar}
+        alt={`${row.original.first_name} ${row.original.last_name}`}
+        className="w-10 h-10 rounded-full object-cover border"
       />
     ),
   },
@@ -41,8 +31,8 @@ export const userColumns: ColumnDef<any>[] = [
     header: "Email",
   },
   {
-    id: 'actions',
-    header: 'Actions',
+    id: "actions",
+    header: "Actions",
     cell: ({ row }) => <UserActions user={row.original} />,
   },
 ];

@@ -1,17 +1,17 @@
-// hooks/useUpdateUser.ts
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { User } from '@/features/dashboard/types/user';
 import { toast } from 'sonner';
 
 interface UpdateUserInput {
+  id: number;        // added id
   name: string;
   job: string;
 }
 
-const updateUser = async (updatedUser: UpdateUserInput): Promise<User> => {
-  const response = await fetch('/api/users', {
+const updateUser = async ({ id, ...updatedUser }: UpdateUserInput): Promise<User> => {
+  const response = await fetch(`https://reqres.in/api/users/${id}`, {   
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', "x-api-key": "reqres-free-v1" },
     body: JSON.stringify(updatedUser),
   });
 
@@ -36,9 +36,9 @@ export const useUpdateUser = ({
   return useMutation({
     mutationFn: updateUser,
 
-    onSuccess: (_, data) => {
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
-      toast.success(`کاربر با شناسه با موفقیت بروزرسانی شد`);
+      toast.success(`User with ID ${variables.id} updated successfully`);
       reset?.();
       setOpen?.(false);
     },
@@ -47,10 +47,10 @@ export const useUpdateUser = ({
       const message =
         error?.response?.data?.message ||
         error?.message ||
-        'خطا در بروزرسانی کاربر. لطفاً دوباره تلاش کنید.';
+        'Error updating user. Please try again.';
 
       toast.error(message);
-      console.error('خطا در بروزرسانی کاربر:', error);
+      console.error('Error updating user:', error);
 
       setError?.('api', { message });
     },

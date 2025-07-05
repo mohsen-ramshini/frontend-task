@@ -7,13 +7,14 @@ import { EditUserModal } from '@/features/dashboard/components/modal/EditUserMod
 import { DeleteUserModal } from '../modal/DeleteUserModal';
 import { useDeleteUser } from '../../api/use-delete-user';
 import { useRouter } from 'next/navigation';
+import { useUpdateUser } from '../../api/use-update-user';
 
 interface User {
   id: number;
   first_name: string;
   last_name: string;
   email: string;
-  job?: string; // اگر job داری، اینجا اضافه کن
+  job?: string;
 }
 
 interface UserActionsProps {
@@ -25,23 +26,31 @@ export const UserActions: React.FC<UserActionsProps> = ({ user }) => {
   const [isUpdating, setIsUpdating] = useState(false);
 
   const deleteUserMutation = useDeleteUser();
+  const updateUser = useUpdateUser({
+    reset: () => {}, // اگر لازم دارید اینجا تعریف کنید
+    setOpen: setIsEditOpen,
+    setError: () => {},
+  });
+  
   const router = useRouter();
 
-  // فرضاً این تابع باید درخواست API برای آپدیت کاربر را اجرا کند
-  const handleUpdate = async (data: { name: string; job: string }) => {
+  const handleUpdate = (values: { name: string; job: string }) => {
     setIsUpdating(true);
 
-    try {
-      // اینجا کد mutation آپدیت کاربر رو بنویس
-      // مثلاً: await updateUser({ id: user.id, ...data });
-      console.log('Updating user', { id: user.id, ...data });
-      setIsEditOpen(false);
-    } catch (error) {
-      console.error(error);
-      // مدیریت خطا
-    } finally {
-      setIsUpdating(false);
-    }
+    updateUser.mutate(
+      { id: user.id, ...values }, // اضافه کردن id به داده‌ها
+      {
+        onSuccess: () => {
+          setIsUpdating(false);
+          setIsEditOpen(false);
+          // مثلا رفرش داده‌ها یا هر کار دیگه
+          router.refresh(); // اگر از next/navigation@app استفاده می‌کنید
+        },
+        onError: () => {
+          setIsUpdating(false);
+        },
+      }
+    );
   };
 
   return (
@@ -75,13 +84,14 @@ export const UserActions: React.FC<UserActionsProps> = ({ user }) => {
           userId={user.id}
           deleteUser={deleteUserMutation.mutateAsync}
           onDeleteSuccess={() => {
-            // مثلا رفرش داده‌ها یا پاک کردن کاربر از لیست
             console.log('Deleted user', user.id);
+            router.refresh();
           }}
         />
       </div>
 
       <EditUserModal
+        userId={user.id}
         isOpen={isEditOpen}
         onClose={() => setIsEditOpen(false)}
         isLoading={isUpdating}

@@ -13,9 +13,7 @@ import { EditUserModal } from './modal/EditUserModal';
 import { toast } from 'sonner';
 
 const Dashboard = () => {
-  const { data: userList, isLoading, error } = useUsers();
-  const updateUser = useUpdateUser();
-  const deleteUser = useDeleteUser();
+  const { data: userList, isLoading, error } = useUsers(1);
   const router = useRouter();
 
   if (error) return <p>Error: {error.message}</p>;
@@ -47,7 +45,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <DataTable columns={userColumns} data={userList ?? []} />
+      <DataTable columns={userColumns}  />
     </div>
   );
 };

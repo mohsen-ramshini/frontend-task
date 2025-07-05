@@ -16,28 +16,17 @@ export const UserProfile: React.FC<UserProfileProps> = ({ id }) => {
   const { data: user, isLoading, isError } = useGetUserById(id);
   const router = useRouter();
 
-  if (isLoading) {
-    return (
-      <div className="space-y-4 max-w-md mx-auto mt-8">
-        <Skeleton className="w-32 h-6" />
-        <Skeleton className="w-full h-32 rounded-xl" />
-        <Skeleton className="w-full h-6" />
-        <Skeleton className="w-1/2 h-6" />
-      </div>
-    );
-  }
 
-  if (isError || !user) {
-    return (
-      <div className="text-red-500 font-medium text-center mt-10">
-        Failed to load user data.
-      </div>
-    );
-  }
+  
 
   return (
     <div className="max-w-xl mx-auto mt-10 space-y-6 px-4">
       {/* Back Button */}
+      {isLoading && (
+        <div className="absolute inset-0 bg-black/20 flex items-center justify-center z-50 backdrop-blur-sm h-screen">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+        </div>
+      )}
       <Button
         variant="ghost"
         onClick={() => router.back()}
@@ -49,7 +38,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ id }) => {
 
       {/* Card */}
       <div className="bg-white rounded-2xl shadow-md p-6 flex items-center gap-6">
-        {user.avatar ? (
+        {user?.avatar ? (
         <Image
             src={user.avatar}
             alt="User avatar"
@@ -65,9 +54,9 @@ export const UserProfile: React.FC<UserProfileProps> = ({ id }) => {
 
         <div className="space-y-2">
           <h2 className="text-2xl font-semibold text-gray-800">
-            {user.first_name} {user.last_name}
+            {user?.first_name} {user?.last_name}
           </h2>
-          <p className="text-gray-600 text-sm">{user.email}</p>
+          <p className="text-gray-600 text-sm">{user?.email}</p>
         </div>
       </div>
     </div>

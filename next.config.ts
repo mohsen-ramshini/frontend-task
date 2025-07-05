@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    domains: ['reqres.in'], // ✅ مجاز کردن بارگذاری تصویر از این دامنه
+  },
 };
 
 export default nextConfig;

@@ -5,13 +5,10 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
   useReactTable,
   SortingState,
   ColumnFiltersState,
   getFilteredRowModel,
-  Row,
 } from "@tanstack/react-table";
 
 import {
@@ -30,85 +27,96 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import {
   ChevronsLeft,
   ChevronsRight,
-  Eye,
-  Edit,
-  Trash2,
 } from "lucide-react";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+import { useUsers } from "../../api/use-get-users"; // مسیر خودت رو اصلاح کن
+
+export interface User {
+  id: number;
+  email: string;
+  first_name: string;
+  last_name: string;
+  avatar: string;
 }
 
-export function DataTable<TData extends { id: number }, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) {
+interface DataTableProps<TValue> {
+  columns: ColumnDef<User, TValue>[];
+}
+
+export function DataTable<TValue>({ columns }: DataTableProps<TValue>) {
+  // pageIndex صفر-مبنایی
+  const [pageIndex, setPageIndex] = useState(0);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
 
-  // نگه‌داری چندتا انتخاب‌شده (multi-select)
-  const [selectedRowIds, setSelectedRowIds] = useState<Set<number>>(new Set());
+  // واکشی داده صفحه فعلی (pageIndex + 1 چون API از 1 شروع می‌کنه)
+  const { data, isLoading, isError } = useUsers(pageIndex + 1);
+
+  const usersData = data?.data ?? [];
 
   const safeToLower = (value: unknown): string =>
     typeof value === "string" ? value.toLowerCase() : "";
 
-  const toggleRowSelected = (row: Row<TData>) => {
-    const newSelected = new Set(selectedRowIds);
-    if (newSelected.has(row.original.id)) {
-      newSelected.delete(row.original.id);
-    } else {
-      newSelected.add(row.original.id);
-    }
-    setSelectedRowIds(newSelected);
-  };
-
-  const isRowSelected = (row: Row<TData>) => selectedRowIds.has(row.original.id);
-
   const table = useReactTable({
-    data,
+    data: usersData,
     columns,
     state: {
       sorting,
       columnFilters,
       globalFilter,
+      pagination: { pageIndex, pageSize: 6 }, // pageSize فقط برای UI (برای نشان دادن تعداد)
     },
+    manualPagination: true,
+    pageCount: data?.total_pages ?? 1,
+
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
+    onPaginationChange: (updater) => {
+      if (typeof updater === "function") {
+        const newState = updater({ pageIndex, pageSize: 6 });
+        setPageIndex(newState.pageIndex);
+      } else {
+        setPageIndex(updater.pageIndex);
+      }
+    },
+
     getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+
     globalFilterFn: (row, columnId, filterValue) => {
       const search = (filterValue ?? "").toString().toLowerCase();
       const firstName = safeToLower(row.getValue("first_name"));
       const lastName = safeToLower(row.getValue("last_name"));
       const email = safeToLower(row.getValue("email"));
-      return firstName.includes(search) || lastName.includes(search) || email.includes(search);
+      return (
+        firstName.includes(search) ||
+        lastName.includes(search) ||
+        email.includes(search)
+      );
     },
   });
 
   return (
     <TooltipProvider>
       <div className="space-y-4">
-        {/* Global search */}
+        {/* جستجوی کلی */}
         <div className="flex items-center justify-between">
           <Input
             placeholder="Search by first name, last name, or email..."
-            value={globalFilter ?? ""}
+            value={globalFilter}
             onChange={(e) => setGlobalFilter(e.target.value)}
             className="max-w-md"
           />
         </div>
 
-        {/* Table container */}
+        {/* جدول */}
         <div className="rounded-xl border border-muted shadow-sm overflow-x-auto">
           <Table>
             <TableHeader className="bg-muted/50">
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id} className="hover:bg-transparent">
+                <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
                     <TableHead
                       key={header.id}
@@ -117,7 +125,10 @@ export function DataTable<TData extends { id: number }, TValue>({
                     >
                       {header.isPlaceholder
                         ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                       {header.column.getIsSorted() === "asc"
                         ? " 🔼"
                         : header.column.getIsSorted() === "desc"
@@ -130,45 +141,34 @@ export function DataTable<TData extends { id: number }, TValue>({
             </TableHeader>
 
             <TableBody>
-              {table.getRowModel().rows.length ? (
-                table.getRowModel().rows.map((row) => {
-                  const selected = isRowSelected(row);
-                  return (
-                    <TableRow
-                      key={row.id}
-                      className={`cursor-pointer transition-colors ${
-                        selected ? "bg-blue-100" : "hover:bg-muted/20"
-                      }`}
-                      onClick={() => toggleRowSelected(row)}
-                    >
-                      {row.getVisibleCells().map((cell) => {
-                        // ستون انتخاب (checkbox)
-                        if (cell.column.id === "select") {
-                          return (
-                            <TableCell key={cell.id} className="py-3 px-4 text-sm">
-                              <input
-                                type="checkbox"
-                                checked={selected}
-                                onChange={() => toggleRowSelected(row)}
-                                onClick={(e) => e.stopPropagation()}
-                                className="cursor-pointer"
-                                aria-label={`Select row ${row.original.id}`}
-                              />
-                            </TableCell>
-                          );
-                        }
-                        return (
-                          <TableCell
-                            key={cell.id}
-                            className="py-3 px-4 text-sm text-foreground/90 whitespace-nowrap"
-                          >
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  );
-                })
+              {isLoading ? (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className="text-center py-10">
+                    Loading...
+                  </TableCell>
+                </TableRow>
+              ) : isError ? (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className="text-center py-10 text-red-500">
+                    Error loading data.
+                  </TableCell>
+                </TableRow>
+              ) : table.getRowModel().rows.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    className="cursor-pointer transition-colors hover:bg-muted/20"
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell
+                        key={cell.id}
+                        className="py-3 px-4 text-sm text-foreground/90 whitespace-nowrap"
+                      >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
               ) : (
                 <TableRow>
                   <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
@@ -183,56 +183,48 @@ export function DataTable<TData extends { id: number }, TValue>({
           </Table>
         </div>
 
-        {/* Pagination */}
+        {/* صفحه‌بندی */}
         <div className="flex flex-col sm:flex-row items-center justify-between pt-2 gap-2">
           <div className="text-xs text-muted-foreground">
-            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+            Page {pageIndex + 1} of {data?.total_pages ?? 1}
           </div>
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
               size="sm"
-              onClick={() => table.setPageIndex(0)}
-              disabled={!table.getCanPreviousPage()}
+              onClick={() => setPageIndex(0)}
+              disabled={pageIndex === 0}
             >
               <ChevronsLeft />
             </Button>
             <Button
               variant="outline"
               size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
+              onClick={() => setPageIndex((old) => Math.max(old - 1, 0))}
+              disabled={pageIndex === 0}
             >
               Previous
             </Button>
             <Button
               variant="outline"
               size="sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
+              onClick={() =>
+                setPageIndex((old) =>
+                  old < (data?.total_pages ?? 1) - 1 ? old + 1 : old
+                )
+              }
+              disabled={pageIndex >= (data?.total_pages ?? 1) - 1}
             >
               Next
             </Button>
             <Button
               variant="outline"
               size="sm"
-              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-              disabled={!table.getCanNextPage()}
+              onClick={() => setPageIndex((data?.total_pages ?? 1) - 1)}
+              disabled={pageIndex >= (data?.total_pages ?? 1) - 1}
             >
               <ChevronsRight />
             </Button>
-
-            <select
-              className="border rounded px-2 py-1 text-xs"
-              value={table.getState().pagination.pageSize}
-              onChange={(e) => table.setPageSize(Number(e.target.value))}
-            >
-              {[5, 10, 20, 50].map((size) => (
-                <option key={size} value={size}>
-                  Show {size}
-                </option>
-              ))}
-            </select>
           </div>
         </div>
       </div>

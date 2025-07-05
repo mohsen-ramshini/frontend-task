@@ -23,9 +23,10 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 interface EditUserModalProps {
+  userId:number;
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: FormValues) => void;
+  onSubmit: (data: { userId: number; name: string; job: string }) => void;
   isLoading?: boolean;
   initialData: {
     name: string;
@@ -34,6 +35,7 @@ interface EditUserModalProps {
 }
 
 export const EditUserModal: React.FC<EditUserModalProps> = ({
+  userId,
   isOpen,
   onClose,
   onSubmit,
@@ -59,7 +61,7 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({
         </DialogHeader>
 
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit((data) => onSubmit({ userId, ...data }))}
           className="space-y-4"
           onClick={e => e.stopPropagation()}
         >

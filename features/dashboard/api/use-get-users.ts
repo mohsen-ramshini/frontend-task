@@ -2,22 +2,30 @@
 import { useQuery } from '@tanstack/react-query';
 import { User } from '@/features/dashboard/types/user';
 
-const fetchUsers = async (): Promise<User[]> => {
-  const response = await fetch('/api/users', { cache: 'no-store' });
+interface UsersResponse {
+  page: number;
+  per_page: number;
+  total: number;
+  total_pages: number;
+  data: User[];
+}
+
+const fetchUsers = async (page: number): Promise<UsersResponse> => {
+  const response = await fetch(`https://reqres.in/api/users?page=${page}`, {
+    headers: { "x-api-key": "reqres-free-v1" },
+  });
 
   if (!response.ok) {
     throw new Error('Failed to fetch users');
   }
 
-  const data = await response.json();
-  return data as User[];
+  return response.json();
 };
 
-export const useUsers = () => {
-  return useQuery<User[], Error>({
-    queryKey: ['users'],
-    queryFn: fetchUsers,
+export const useUsers = (page: number) => {
+  return useQuery<UsersResponse, Error>({
+    queryKey: ['users', page],
+    queryFn: () => fetchUsers(page),
     staleTime: 1000 * 60 * 5,
   });
 };
-    
