@@ -20,10 +20,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '@/features/dashboard/store/index';
-import { setUsers } from '@/features/dashboard/store/userSlice';
-
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "@/features/dashboard/store/index";
+import { setUsers } from "@/features/dashboard/store/userSlice";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -59,10 +58,10 @@ export function DataTable<TValue>({ columns }: DataTableProps<TValue>) {
   const { data, isLoading, isError } = useUsers(pageIndex + 1);
 
   useEffect(() => {
-  if (data?.data) {
-    dispatch(setUsers(data.data));
-  }
-}, [data, dispatch]);
+    if (data?.data) {
+      dispatch(setUsers(data.data));
+    }
+  }, [data, dispatch]);
 
   const safeToLower = (value: unknown): string =>
     typeof value === "string" ? value.toLowerCase() : "";
@@ -107,8 +106,6 @@ export function DataTable<TValue>({ columns }: DataTableProps<TValue>) {
     },
   });
 
-  const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
-
   return (
     <TooltipProvider>
       <div className="space-y-4">
@@ -131,11 +128,9 @@ export function DataTable<TValue>({ columns }: DataTableProps<TValue>) {
             table.getRowModel().rows.map((row) => (
               <Card key={row.id} className="p-4 space-y-2">
                 {row.getVisibleCells().map((cell) => (
-                  <div key={cell.id} className="text-sm">
-                    <span className="font-semibold block">
-                      {cell.column.columnDef.header as string}
-                    </span>
-                    <span className="text-muted-foreground">
+                  <div key={cell.id} className="flex justify-between text-sm">
+                    <span className="font-semibold">{cell.column.columnDef.header as string}</span>
+                    <span className="text-muted-foreground ml-2">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </span>
                   </div>
